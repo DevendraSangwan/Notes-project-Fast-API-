@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f8fc">
+    <title>Notes — Your space to think</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #20243a;
+            --muted: #747b91;
+            --line: #e8eaf1;
+            --surface: #ffffff;
+            --canvas: #f7f8fc;
+            --accent: #6558d3;
+            --accent-dark: #5144be;
+            --shadow: 0 18px 50px rgba(36, 42, 75, 0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 15% 0%, rgba(224, 220, 255, 0.45), transparent 34rem),
+                var(--canvas);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        .topbar {
+            position: sticky;
+            z-index: 2;
+            top: 0;
+            border-bottom: 1px solid rgba(232, 234, 241, 0.85);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+        }
+
+        .nav-inner {
+            display: flex;
+            width: min(1120px, calc(100% - 48px));
+            min-height: 72px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 0 auto;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink);
+            font-size: 18px;
+            font-weight: 750;
+            letter-spacing: -0.6px;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border-radius: 11px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 17px;
+            box-shadow: 0 5px 12px rgba(101, 88, 211, 0.24);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+            margin: 0 auto 0 26px;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 550;
+            text-decoration: none;
+            transition: color 150ms ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .search-form {
+            display: flex;
+            width: min(310px, 38vw);
+            gap: 8px;
+        }
+
+        .search-form input {
+            min-width: 0;
+            flex: 1;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            outline: 0;
+            padding: 9px 12px;
+            background: #fbfbfd;
+            color: var(--ink);
+            font-size: 13px;
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+        }
+
+        .search-form input:focus,
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #aaa2ed;
+            box-shadow: 0 0 0 4px rgba(101, 88, 211, 0.1);
+        }
+
+        .search-form button,
+        .submit-button {
+            border: 0;
+            border-radius: 10px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 650;
+            cursor: pointer;
+            transition: background 150ms ease, transform 150ms ease;
+        }
+
+        .search-form button {
+            padding: 9px 14px;
+            font-size: 13px;
+        }
+
+        .search-form button:hover,
+        .submit-button:hover {
+            background: var(--accent-dark);
+        }
+
+        .submit-button:active {
+            transform: translateY(1px);
+        }
+
+        main {
+            width: min(860px, calc(100% - 48px));
+            margin: 58px auto 80px;
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 12px;
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            width: 18px;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+            content: "";
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 760;
+            letter-spacing: -1.7px;
+            line-height: 1.15;
+        }
+
+        .intro {
+            margin-bottom: 30px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .note-form {
+            padding: 26px;
+            border: 1px solid rgba(232, 234, 241, 0.9);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .form-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .form-heading h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.25px;
+        }
+
+        .local-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 20px;
+            padding: 6px 9px;
+            background: #f2f0ff;
+            color: #6558c1;
+            font-size: 11px;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .local-badge::before {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8174e5;
+            content: "";
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #41475d;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .field input,
+        .field textarea {
+            display: block;
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            outline: 0;
+            padding: 12px 13px;
+            background: #fdfdff;
+            color: var(--ink);
+            font-size: 14px;
+            transition: border-color 150ms ease, box-shadow 150ms ease;
+        }
+
+        .field textarea {
+            min-height: 105px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder,
+        .search-form input::placeholder {
+            color: #a3a8b8;
+        }
+
+        .form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .check-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .check-label input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--accent);
+        }
+
+        .submit-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 42px;
+            padding: 0 17px;
+            font-size: 13px;
+        }
+
+        .submit-button span {
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 0;
+        }
+
+        .notes-section {
+            margin-top: 46px;
+        }
+
+        .notes-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .notes-heading h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 740;
+            letter-spacing: -0.7px;
+        }
+
+        .notes-count {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .note-card {
+            position: relative;
+            min-height: 145px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            padding: 20px;
+            background: var(--surface);
+            box-shadow: 0 5px 18px rgba(36, 42, 75, 0.035);
+            animation: appear 220ms ease both;
+        }
+
+        .note-card::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--card-accent, #c9c4f4);
+            content: "";
+        }
+
+        .note-card h3 {
+            margin: 0 0 9px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            overflow-wrap: anywhere;
+        }
+
+        .note-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .note-card .note-source {
+            display: inline-block;
+            margin-top: 15px;
+            color: #9ba0b0;
+            font-size: 10px;
+            font-weight: 650;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            border: 1px dashed #d9dce7;
+            border-radius: 15px;
+            padding: 30px 20px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .empty-state strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-inner {
+                width: min(100% - 32px, 860px);
+                min-height: 64px;
+                flex-wrap: wrap;
+                gap: 12px;
+                padding: 12px 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .search-form {
+                width: 100%;
+                order: 1;
+            }
+
+            main {
+                width: min(100% - 32px, 860px);
+                margin-top: 38px;
+            }
+
+            .note-form {
+                padding: 20px;
+            }
+
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <nav class="nav-inner" aria-label="Main navigation">
+            <a class="brand" href="/" aria-label="Notes home">
+                <span class="brand-mark" aria-hidden="true">N</span>
+                <span>Notes</span>
+            </a>
+
+            <div class="nav-links">
+                <a class="active" href="/">Home</a>
+                <a href="#your-notes">My notes</a>
+                <a href="#add-note">About</a>
+            </div>
+
+            <form class="search-form" id="search-form" role="search">
+                <input id="search-input" type="search" placeholder="Search your notes..." aria-label="Search your notes">
+                <button type="submit">Search</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        <section aria-labelledby="page-title">
+            <p class="eyebrow">A little space for your thoughts</p>
+            <h1 id="page-title">Start adding your note</h1>
+            <p class="intro">Capture an idea, save a reminder, or write down whatever is on your mind.</p>
+
+            <form class="note-form" id="note-form" action="/" method="post">
+                <div class="form-heading">
+                    <h2 id="add-note">Create a note</h2>
+                    <span class="local-badge">Saved to MongoDB</span>
+                </div>
+
+                <div class="field">
+                    <label for="note-title">Note title</label>
+                    <input id="note-title" name="title" type="text" maxlength="100" placeholder="Give your note a title..." required>
+                </div>
+
+                <div class="field">
+                    <label for="note-description">Note description</label>
+                    <textarea id="note-description" name="desc" maxlength="2000" placeholder="Write something worth remembering..." required></textarea>
+                </div>
+
+                <div class="form-footer">
+                    <label class="check-label" for="note-remember">
+                        <input id="note-remember" name="important" type="checkbox">
+                        Keep this in mind
+                    </label>
+                    <button class="submit-button" type="submit">Add note <span aria-hidden="true">+</span></button>
+                </div>
+            </form>
+        </section>
+
+        <section class="notes-section" id="your-notes" aria-labelledby="notes-title">
+            <div class="notes-heading">
+                <h2 id="notes-title">Your notes</h2>
+                <span class="notes-count" id="notes-count" aria-live="polite"></span>
+            </div>
+
+            <div class="notes-grid" id="notes-grid">
+                {% for doc in newDocs %}
+                <article class="note-card" data-search="{{ (doc.title ~ ' ' ~ doc.desc) | lower | e }}">
+                    <h3>{{ doc.title }}</h3>
+                    <p>{{ doc.desc }}</p>
+                    <span class="note-source">{% if doc.important %}Keep in mind{% else %}From your notes{% endif %}</span>
+                </article>
+                {% else %}
+                <div class="empty-state" id="empty-state">
+                    <strong>Your notes will show up here</strong>
+                    Write your first thought above to get started.
+                </div>
+                {% endfor %}
+                <div class="empty-state" id="no-results" hidden>
+                    <strong>No matching notes</strong>
+                    Try a different search.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const grid = document.getElementById("notes-grid");
+            const searchForm = document.getElementById("search-form");
+            const searchInput = document.getElementById("search-input");
+            const count = document.getElementById("notes-count");
+            const emptyState = document.getElementById("empty-state");
+            const noResults = document.getElementById("no-results");
+
+            const filterNotes = (query) => {
+                const normalizedQuery = query.trim().toLocaleLowerCase();
+                let visibleCount = 0;
+                grid.querySelectorAll(".note-card").forEach((card) => {
+                    const searchableText = (card.dataset.search || card.textContent).toLocaleLowerCase();
+                    const matches = searchableText.includes(normalizedQuery);
+                    card.hidden = !matches;
+                    if (matches) visibleCount += 1;
+                });
+                if (emptyState) emptyState.hidden = normalizedQuery.length > 0;
+                if (noResults) noResults.hidden = normalizedQuery.length === 0 || visibleCount > 0;
+                count.textContent = `${visibleCount} ${visibleCount === 1 ? "note" : "notes"}`;
+            };
+
+            searchForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                filterNotes(searchInput.value);
+                document.getElementById("your-notes").scrollIntoView({ behavior: "smooth" });
+            });
+
+            searchInput.addEventListener("input", () => filterNotes(searchInput.value));
+
+            filterNotes("");
+        })();
+    </script>
+</body>
+
+</html>
